@@ -1,0 +1,7 @@
+# IDE
+.idea
+.vscode
+
+# Generated Files
+node_modules
+src/styles/output.css
