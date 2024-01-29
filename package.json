@@ -5,7 +5,8 @@
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron ."
+    "start": "npx tailwindcss -i ./src/styles/input.css -o ./src/styles/output.css && electron .",
+    "tailwind": "npx tailwindcss -i ./src/styles/input.css -o ./src/styles/output.css --watch"
   },
   "private": true,
   "devDependencies": {
