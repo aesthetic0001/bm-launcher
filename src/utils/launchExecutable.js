@@ -9,8 +9,8 @@ function launchExecutable(executableName) {
         name: 'xterm-color',
         cwd: path.join(releasesPath, executableName),
         env: process.env,
-        rows: 30,
-        cols: 60,
+        rows: 50,
+        cols: 200,
     });
 
     switch (process.platform) {

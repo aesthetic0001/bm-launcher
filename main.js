@@ -51,7 +51,7 @@ function createWindow() {
 }
 
 function getCurrentWindow() {
-    return BrowserWindow.getFocusedWindow()
+    return BrowserWindow.getAllWindows()[0]
 }
 
 app.whenReady().then(() => {
@@ -98,7 +98,7 @@ ipcMain.on('kill', () => {
 })
 
 ipcMain.on('console_input', (event, data) => {
-    write(data.trim() + '\n')
+    write(data.trim() + (process.platform === 'win32' ? '\r\n' : '\n'))
 })
 
 launchEmitter.on('stdout', (data) => {
