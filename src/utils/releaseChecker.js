@@ -84,6 +84,10 @@ async function checkForUpdates(type, downloadCache) {
     }
 }
 
+function getConfigPath(botType) {
+    return path.join(releasesPath, releaseNameMap[botType][platform].replaceAll(".zip", ""), 'config.json');
+}
+
 function getEmitter() {
     return releaseCheckEmitter;
 }
@@ -91,4 +95,5 @@ function getEmitter() {
 module.exports = {
     checkForUpdates,
     getEmitter,
+    getConfigPath
 }
