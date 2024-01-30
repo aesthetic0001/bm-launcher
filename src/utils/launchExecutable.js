@@ -6,13 +6,14 @@ const releasesPath = path.join(__dirname, '..', '..', 'cache', 'releases');
 function launchExecutable(executableName) {
     const child = spawn(`./${executableName}`, {
         detached: true,
-        stdio: 'ignore',
         cwd: path.join(releasesPath, executableName),
     });
 
+    child.unref();
+
     child.stdout.on('data', (data) => {
         launchEmitter.emit('stdout', data);
-    });
+    })
 
     child.on('close', (code) => {
         launchEmitter.emit('close', code);
