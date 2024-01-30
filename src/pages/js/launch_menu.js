@@ -15,13 +15,10 @@ const consoleInput = window.document.getElementById('console_input');
 
 const releasesPath = path.join(__dirname, '..', '..', '..', 'cache', 'releases');
 const updateEmitter = getEmitter()
-const launchEmitter = getLaunchEmitter()
 let launching = false;
 let config = {};
-let write, kill;
 
-launchEmitter.on('stdout', (data) => {
-    console.log(`stdout: ${data}`);
+ipcRenderer.on('stdout', (event, data) => {
     launchButton.innerHTML = 'Stop'
     launchButton.className = 'btn btn-error w-full max-w-sm'
     const div = document.createElement('div')
@@ -31,8 +28,7 @@ launchEmitter.on('stdout', (data) => {
     consoleDiv.scrollTop = consoleDiv.scrollHeight;
 })
 
-launchEmitter.on('exit', (code) => {
-    console.log(`child process exited with code ${code}`);
+ipcRenderer.on('exit', (event, code) => {
     launching = false
     launchButton.innerHTML = 'Launch'
     launchButton.className = 'btn btn-success w-full max-w-sm'
@@ -79,9 +75,8 @@ bmKey.addEventListener('input', () => {
 })
 
 consoleInput.addEventListener('keyup', (e) => {
-    if (write && e.key === 'Enter' && launchButton.innerHTML === 'Stop') {
-        console.log(`Sending ${consoleInput.value}`)
-        write(consoleInput.value + '\r')
+    if (e.key === 'Enter' && launchButton.innerHTML === 'Stop') {
+        ipcRenderer.send('console_input', consoleInput.value)
         consoleInput.value = ''
     }
 })
@@ -105,9 +100,7 @@ window.document.getElementById('launch').addEventListener('click', async () => {
     } else {
         launchButton.innerHTML = 'Launch'
         launchButton.className = 'btn btn-success w-full max-w-sm'
-        kill()
-        write = null
-        kill = null
+        ipcRenderer.send('kill')
         return
     }
     console.log('Preparing for launch...')
@@ -118,7 +111,5 @@ window.document.getElementById('launch').addEventListener('click', async () => {
     config.downloadCache[releaseName] = releaseHash
     fs.writeFileSync(path.join(releasesPath, releaseName.replaceAll('.zip', ''), 'lkey.txt'), bmKey.value)
     ipcRenderer.send('config', JSON.stringify(config))
-    const fns = launchExecutable(releaseName.replaceAll('.zip', ''))
-    write = fns.write
-    kill = fns.kill
+    ipcRenderer.send('launch', releaseName.replaceAll('.zip', ''))
 })

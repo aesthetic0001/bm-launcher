@@ -8,7 +8,9 @@ function launchExecutable(executableName) {
     const ptyProcess = pty.spawn(terminalExecutable, [], {
         name: 'xterm-color',
         cwd: path.join(releasesPath, executableName),
-        env: process.env
+        env: process.env,
+        rows: 30,
+        cols: 60,
     });
 
     switch (process.platform) {

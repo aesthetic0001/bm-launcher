@@ -2,6 +2,8 @@ const {app, BrowserWindow} = require('electron/main')
 const {ipcMain} = require('electron')
 const path = require('node:path')
 const fs = require("fs");
+const configCache = require(path.join(__dirname, 'cache', 'config.json'))
+const {launchExecutable, getLaunchEmitter} = require("./src/utils/launchExecutable");
 
 if (!fs.existsSync(path.join(__dirname, 'cache'))) {
     fs.mkdirSync(path.join(__dirname, 'cache'))
@@ -17,8 +19,6 @@ if (!fs.existsSync(path.join(__dirname, 'cache'))) {
     }))
 }
 
-const configCache = require(path.join(__dirname, 'cache', 'config.json'))
-
 const configProxy = new Proxy(configCache, {
     set: (target, p, value) => {
         target[p] = value
@@ -26,6 +26,11 @@ const configProxy = new Proxy(configCache, {
         return true
     }
 })
+
+
+const launchEmitter = getLaunchEmitter()
+
+let write, kill;
 
 function createWindow() {
     const win = new BrowserWindow({
@@ -77,4 +82,30 @@ ipcMain.on('config', (event, cfg) => {
     for (const key in config) {
         configProxy[key] = config[key]
     }
+})
+
+ipcMain.on('launch', (event, executableName) => {
+    const fns = launchExecutable(executableName)
+    write = fns.write
+    kill = fns.kill
+})
+
+ipcMain.on('kill', () => {
+    kill()
+    write = null
+    kill = null
+})
+
+ipcMain.on('console_input', (event, data) => {
+    write(data.trim() + process.platform === 'win32' ? '\r\n' : '\n')
+})
+
+launchEmitter.on('stdout', (data) => {
+    getCurrentWindow().webContents.send('stdout', data)
+})
+
+launchEmitter.on('exit', (exitCode) => {
+    getCurrentWindow().webContents.send('exit', exitCode)
+    write = null
+    kill = null
 })
