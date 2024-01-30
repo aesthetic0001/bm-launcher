@@ -1,7 +1,9 @@
 const axios = require('axios');
+const unzipper = require('unzipper');
 const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
+const { Readable } = require('stream');
 
 const releasesPath = path.join(__dirname, '..', '..', 'cache', 'releases');
 const platform = process.platform;
@@ -47,7 +49,10 @@ async function downloadRelease(type, downloadCache) {
         throw new Error(`Checksum mismatch for release ${releaseName}! Expected ${checksumMap[releaseName]}, got ${releaseHash}`)
     }
 
-    fs.writeFileSync(path.join(releasesPath, releaseName), Buffer.from(release.data));
+    const stream = Readable.from(Buffer.from(release.data));
+
+    await stream.pipe(unzipper.Extract({path: path.join(releasesPath, releaseName.replaceAll('.zip', ''))})).promise();
+
     releaseCheckEmitter.emit('up-to-date', releaseName);
     return releaseHash
 }
@@ -56,7 +61,8 @@ async function checkForUpdates(type, downloadCache) {
     releaseCheckEmitter.emit('checking');
     const releaseName = releaseNameMap[type][platform];
     const fileExists = fs.readdirSync(releasesPath).includes(releaseName.replaceAll('.zip', ''));
-    if (!fileExists || !downloadCache[releaseName]) {
+    if (!fileExists && !downloadCache[releaseName]) {
+        console.log(`Release ${releaseName} not found! Downloading...`)
         releaseCheckEmitter.emit('downloading', releaseName);
         return await downloadRelease(type);
     }
