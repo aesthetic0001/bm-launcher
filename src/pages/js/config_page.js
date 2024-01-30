@@ -21,17 +21,12 @@ ipcRenderer.once('config', async (event, data) => {
 
 
     const editor = new JSONEditor(window.document.getElementById('container'), {
-        onEditable: (node) => {
-            return {
-                field: false,
-                value: readyForModification
-            }
-        },
         onChangeJSON: (json) => {
             if (!readyForModification) return;
             releaseConfig = json;
             fs.writeFileSync(getConfigPath(botType.value.toLowerCase()), JSON.stringify(releaseConfig))
-        }
+        },
+        search: false
     })
 
     async function setReleaseConfig() {
@@ -41,6 +36,7 @@ ipcRenderer.once('config', async (event, data) => {
         ipcRenderer.send('config', JSON.stringify(config))
         releaseConfig = JSON.parse(fs.readFileSync(getConfigPath(botType.value.toLowerCase())).toString())
         editor.set(releaseConfig)
+        editor.setMode('form')
         editor.expandAll()
         readyForModification = true;
     }
