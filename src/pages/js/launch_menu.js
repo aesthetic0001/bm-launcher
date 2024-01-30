@@ -1,6 +1,5 @@
 const {ipcRenderer} = require('electron');
 const {checkForUpdates, getEmitter} = require("../../utils/releaseChecker");
-const {launchExecutable, getLaunchEmitter} = require("../../utils/launchExecutable");
 const fs = require("fs");
 const path = require("path");
 const Convert = require('ansi-to-html');
@@ -9,6 +8,7 @@ const convert = new Convert();
 const botType = window.document.getElementById('bot_type');
 const bmKey = window.document.getElementById('bm_key');
 const launchButton = window.document.getElementById('launch');
+const configureTabs = window.document.getElementsByClassName('config');
 const toastDiv = window.document.getElementById('toasts');
 const consoleDiv = window.document.getElementById('console_output');
 const consoleInput = window.document.getElementById('console_input');
@@ -80,6 +80,12 @@ consoleInput.addEventListener('keyup', (e) => {
         consoleInput.value = ''
     }
 })
+
+for (const tab of configureTabs) {
+    tab.addEventListener('click', () => {
+        ipcRenderer.send('config_page');
+    })
+}
 
 window.document.getElementById('launch').addEventListener('click', async () => {
     if (bmKey.value.length === 0 && !launching) {

@@ -85,6 +85,14 @@ ipcMain.on('config', (event, cfg) => {
     }
 })
 
+ipcMain.on('launch_menu', () => {
+    getCurrentWindow().loadFile('./src/pages/launch_menu.html')
+})
+
+ipcMain.on('config_page', () => {
+    getCurrentWindow().loadFile('./src/pages/config.html')
+})
+
 ipcMain.on('launch', (event, executableName) => {
     const fns = launchExecutable(executableName)
     write = fns.write

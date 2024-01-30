@@ -11,6 +11,11 @@ module.exports = {
             fontFamily: {
                 'jetbrains': 'JetBrains Mono',
             },
+            transitionProperty: {
+                'width': 'width',
+                'height': 'height',
+                'spacing': 'margin, padding',
+            }
         },
     },
     plugins: [require("daisyui")],
