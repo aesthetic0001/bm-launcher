@@ -1,14 +1,18 @@
 {
   "name": "bm-launcher",
   "version": "1.0.0",
-  "description": "",
+  "description": "a launcher for binmaster products",
+  "author": "aesthetic",
+  "license": "MIT",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npx tailwindcss -i ./src/styles/input.css -o ./src/styles/output.css && electron .",
-    "tailwind": "npx tailwindcss -i ./src/styles/input.css -o ./src/styles/output.css --watch",
     "compile_css": "npx tailwindcss -i ./src/styles/input.css -o ./src/styles/output.css",
-    "make": "npm run compile_css && electron-forge make"
+    "start": "npm run compile_css && electron-forge start",
+    "tailwind": "npx tailwindcss -i ./src/styles/input.css -o ./src/styles/output.css --watch",
+    "make": "npm run compile_css && electron-forge make",
+    "package": "npm run compile_css && electron-forge package",
+    "build-web": "cp html out/html; rm -r out/html/startPage;",
+    "postinstall": "patch-package"
   },
   "private": true,
   "dependencies": {
