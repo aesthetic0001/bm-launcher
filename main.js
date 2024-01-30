@@ -45,8 +45,6 @@ function createWindow() {
         }
     })
 
-    win.webContents.openDevTools()
-
     win.loadFile(configProxy.firstTime ? './src/pages/welcome.html' : './src/pages/launch_menu.html')
 }
 
