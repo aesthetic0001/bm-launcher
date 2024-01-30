@@ -11,20 +11,13 @@ for (const tab of launchTabs) {
     })
 }
 
+let readyForModification = false;
+
 ipcRenderer.once('config', async (event, data) => {
     const config = JSON.parse(data);
 
     let releaseConfig
 
-    async function setReleaseConfig() {
-        const {releaseName, releaseHash} = await checkForUpdates(botType.value.toLowerCase(), config.downloadCache)
-        config.downloadCache[releaseName] = releaseHash;
-        ipcRenderer.send('config', JSON.stringify(config))
-        releaseConfig = fs.readFileSync(getConfigPath(botType.value.toLowerCase())).toString()
-    }
-
-
-    await setReleaseConfig()
 
     const monaco = await loader()
 
@@ -34,7 +27,20 @@ ipcRenderer.once('config', async (event, data) => {
         automaticLayout: true
     })
 
-    editor.setValue(releaseConfig)
+    async function setReleaseConfig() {
+        readyForModification = false;
+        editor.updateOptions({readOnly: true})
+        const {releaseName, releaseHash} = await checkForUpdates(botType.value.toLowerCase(), config.downloadCache)
+        config.downloadCache[releaseName] = releaseHash;
+        ipcRenderer.send('config', JSON.stringify(config))
+        releaseConfig = fs.readFileSync(getConfigPath(botType.value.toLowerCase())).toString()
+        editor.setValue(releaseConfig)
+        editor.updateOptions({readOnly: false})
+        readyForModification = true;
+    }
+
+    await setReleaseConfig()
+
 
     editor.getModel().onDidChangeContent(() => {
         fs.writeFileSync(getConfigPath(botType.value.toLowerCase()), editor.getValue())

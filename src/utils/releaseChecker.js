@@ -55,6 +55,9 @@ async function downloadRelease(type) {
     fs.chmodSync(path.join(releasesPath, releaseName.replaceAll('.zip', ''), releaseName.replaceAll('.zip', '')), 0o755);
 
     releaseCheckEmitter.emit('up-to-date', releaseName);
+
+    console.log(`Release ${releaseName} downloaded!`)
+
     return {
         releaseName,
         releaseHash,
