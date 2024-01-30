@@ -1,34 +1,51 @@
 const {ipcRenderer} = require('electron');
-const axios = require('axios');
-const fs = require('fs');
-const path = require('path');
-
-const cachePath = path.join(__dirname, '..', '..', '..', 'cache');
-
+const {checkForUpdates, getEmitter} = require("../../utils/releaseChecker");
 const botType = window.document.getElementById('bot_type');
 const bmKey = window.document.getElementById('bm_key');
 const launchButton = window.document.getElementById('launch');
 const toastDiv = window.document.getElementById('toasts');
 
+const updateEmitter = getEmitter()
 let launched = false;
+let config = {};
+
+updateEmitter.on('checking', () => {
+    console.log('Checking for updates...')
+    launchButton.innerHTML = 'Checking for updates...'
+    launchButton.className = 'btn btn-warning w-full max-w-sm'
+})
+
+updateEmitter.on('downloading', () => {
+    console.log('Update available!')
+    launchButton.innerHTML = 'Downloading update...'
+    launchButton.className = 'btn btn-warning w-full max-w-sm'
+})
+
+updateEmitter.on('up-to-date', () => {
+    console.log('Update downloaded!')
+    launchButton.innerHTML = 'Up to date!'
+    launchButton.className = 'btn btn-success w-full max-w-sm'
+})
 
 ipcRenderer.send('get_config');
 
-ipcRenderer.on('config', (event, config) => {
-    config = JSON.parse(config);
+ipcRenderer.on('config', (event, stringifiedConfig) => {
+    config = JSON.parse(stringifiedConfig);
     if (config.cachedMode) botType.value = config.cachedMode;
     if (config.cachedKey) bmKey.value = config.cachedKey;
 })
 
 botType.addEventListener('input', () => {
+    config.cachedMode = botType.value;
     ipcRenderer.send('bot_type', botType.value);
 })
 
 bmKey.addEventListener('input', () => {
+    config.cachedKey = bmKey.value;
     ipcRenderer.send('bm_key', bmKey.value);
 })
 
-window.document.getElementById('launch').addEventListener('click', () => {
+window.document.getElementById('launch').addEventListener('click', async () => {
     if (bmKey.value.length === 0 && !launched) {
         const toast = document.createElement('div')
         toast.className = "alert alert-error"
@@ -41,10 +58,12 @@ window.document.getElementById('launch').addEventListener('click', () => {
     }
     launched = !launched
     if (launched) {
-        launchButton.innerHTML = 'Stop'
+        launchButton.innerHTML = 'Launching...'
         launchButton.className = 'btn btn-error w-full max-w-sm'
     } else {
         launchButton.innerHTML = 'Launch'
         launchButton.className = 'btn btn-success w-full max-w-sm'
     }
+    console.log('Preparing for launch...')
+    await checkForUpdates(botType.value.toLowerCase(), config.downloadCache)
 })

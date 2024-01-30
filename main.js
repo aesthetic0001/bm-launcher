@@ -5,13 +5,15 @@ const fs = require("fs");
 
 if (!fs.existsSync(path.join(__dirname, 'cache'))) {
     fs.mkdirSync(path.join(__dirname, 'cache'))
+    fs.mkdirSync(path.join(__dirname, 'cache', 'releases'))
     fs.writeFileSync(path.join(__dirname, 'cache', 'config.json'), JSON.stringify({
         firstTime: true,
         cachedKey: null,
         cachedMode: null,
         launcherOptions: {
             enableBeta: false,
-        }
+        },
+        downloadCache: {}
     }))
 }
 
@@ -32,7 +34,6 @@ function createWindow() {
         width: 800,
         height: 600,
         webPreferences: {
-            preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: true,
             contextIsolation: false,
             enableRemoteModule: true,
