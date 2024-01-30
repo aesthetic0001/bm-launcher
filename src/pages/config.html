@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>BinMaster Launcher</title>
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';"/>
+    <!--  daisyUI stylesheet -->
+    <link rel="stylesheet" href="../styles/output.css"/>
+    <!--    jetbrains-mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
+</head>
+<body class="overflow-hidden">
+<div class="toast toast-top toast-end z-50" id="toasts"></div>
+<div class="navbar bg-base-100">
+    <div class="navbar-start">
+        <div class="dropdown">
+            <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                     stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16"/>
+                </svg>
+            </div>
+            <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-200 rounded-box w-52">
+                <li><a id="launch_menu">Launch Menu</a></li>
+                <li><a id="config">Configure Executables</a></li>
+            </ul>
+        </div>
+        <a class="btn btn-ghost text-xl">binmaster</a>
+    </div>
+    <div class="navbar-center hidden lg:flex">
+        <ul class="menu menu-horizontal px-1">
+            <li><a>Launch Menu</a></li>
+            <li><a>Launcher Options</a></li>
+        </ul>
+    </div>
+    <div class="navbar-end px-5">
+        <svg role="button" class="hover:scale-125 transition-all duration-200 ease-in-out" id="discord"
+             xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="32" height="32" viewBox="0 0 48 48">
+            <path fill="#8c9eff"
+                  d="M40,12c0,0-4.585-3.588-10-4l-0.488,0.976C34.408,10.174,36.654,11.891,39,14c-4.045-2.065-8.039-4-15-4s-10.955,1.935-15,4c2.346-2.109,5.018-4.015,9.488-5.024L18,8c-5.681,0.537-10,4-10,4s-5.121,7.425-6,22c5.162,5.953,13,6,13,6l1.639-2.185C13.857,36.848,10.715,35.121,8,32c3.238,2.45,8.125,5,16,5s12.762-2.55,16-5c-2.715,3.121-5.857,4.848-8.639,5.815L33,40c0,0,7.838-0.047,13-6C45.121,19.425,40,12,40,12z M17.5,30c-1.933,0-3.5-1.791-3.5-4c0-2.209,1.567-4,3.5-4s3.5,1.791,3.5,4C21,28.209,19.433,30,17.5,30z M30.5,30c-1.933,0-3.5-1.791-3.5-4c0-2.209,1.567-4,3.5-4s3.5,1.791,3.5,4C34,28.209,32.433,30,30.5,30z"></path>
+        </svg>
+    </div>
+</div>
+<div class="relative grid grid-rows-5 grid-cols-6 gap-5 px-10 py-5 h-screen">
+    <!--    box for console output -->
+    <div id="console_output" class="relative bg-base-300 row-span-3 col-span-4 rounded-lg overflow-y-scroll">
+
+    </div>
+    <div class="relative col-span-2 m-auto">
+        <h1 class="text-3xl font-bold text-center">Launch Options</h1>
+        <div class="label">
+            <span class="label-text">Bot Type</span>
+        </div>
+        <select id="bot_type" class="select select-bordered w-full max-w-sm">
+            <option>Auction</option>
+            <option>Slayer</option>
+        </select>
+        <label class="form-control w-full max-w-sm">
+            <div class="label">
+                <span class="label-text">BinMaster Key</span>
+            </div>
+            <input id="bm_key" type="text" placeholder="Enter your key..."
+                   class="input input-bordered w-full max-w-sm"/>
+        </label>
+        <div class="py-3">
+            <button class="btn btn-success w-full max-w-sm" id="launch">Launch</button>
+        </div>
+    </div>
+    <div class="row-span-1 col-span-3">
+        <div class="label">
+            <span class="label-text">Write something to the console</span>
+        </div>
+        <input type="text" placeholder="Enter a command" class="input input-bordered w-full max-w-lg" id="console_input"/>
+    </div>
+</div>
+<script defer>require('./js/shared')</script>
+<script defer>require('./js/launch_menu')</script>
+<script defer>
+    const discord = document.getElementById("discord");
+    discord.addEventListener("click", () => {
+        require('electron').shell.openExternal("https://discord.gg/binmaster");
+    });
+</script>
+</body>
+</html>
