@@ -1,5 +1,5 @@
 const {ipcRenderer} = require('electron');
-const loader = require('monaco-loader')
+const JSONEditor = require('jsoneditor')
 const {checkForUpdates, getConfigPath} = require("../../utils/releaseChecker");
 const fs = require("fs");
 const botType = window.document.getElementById('bot_type');
@@ -19,32 +19,37 @@ ipcRenderer.once('config', async (event, data) => {
     let releaseConfig
 
 
-    const monaco = await loader()
 
-    const editor = monaco.editor.create(document.getElementById('container'), {
-        language: 'json',
-        theme: 'vs-dark',
-        automaticLayout: true
+    const editor = new JSONEditor(window.document.getElementById('container'), {
+        onEditable: (node) => {
+            return {
+                field: false,
+                value: readyForModification
+            }
+        },
+        onChangeJSON: (json) => {
+            if (!readyForModification) return;
+            releaseConfig = json;
+            fs.writeFileSync(getConfigPath(botType.value.toLowerCase()), JSON.stringify(releaseConfig))
+        }
     })
 
     async function setReleaseConfig() {
         readyForModification = false;
-        editor.updateOptions({readOnly: true})
         const {releaseName, releaseHash} = await checkForUpdates(botType.value.toLowerCase(), config.downloadCache)
         config.downloadCache[releaseName] = releaseHash;
         ipcRenderer.send('config', JSON.stringify(config))
-        releaseConfig = fs.readFileSync(getConfigPath(botType.value.toLowerCase())).toString()
-        editor.setValue(releaseConfig)
-        editor.updateOptions({readOnly: false})
+        releaseConfig = JSON.parse(fs.readFileSync(getConfigPath(botType.value.toLowerCase())).toString())
+        editor.set(releaseConfig)
+        editor.expandAll()
         readyForModification = true;
     }
 
     await setReleaseConfig()
 
-
-    editor.getModel().onDidChangeContent(() => {
-        fs.writeFileSync(getConfigPath(botType.value.toLowerCase()), editor.getValue())
-    })
+    editor.set(releaseConfig)
+    editor.setMode('form')
+    editor.expandAll()
 
     botType.addEventListener('change', async () => {
         await setReleaseConfig()
