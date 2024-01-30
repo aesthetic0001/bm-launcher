@@ -79,7 +79,3 @@ ipcMain.on('bm_key', (event, key) => {
 ipcMain.on('bot_type', (event, mode) => {
     launcherConfig.cachedMode = mode
 })
-
-ipcMain.on('launch', () => {
-    console.log("launch")
-})
