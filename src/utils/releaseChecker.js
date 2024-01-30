@@ -1,5 +1,5 @@
 const axios = require('axios');
-const unzipper = require('unzipper');
+const AdmZip = require("adm-zip");
 const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
@@ -39,8 +39,9 @@ async function getChecksumMap() {
     return checksumMap;
 }
 
-async function downloadRelease(type, downloadCache) {
+async function downloadRelease(type) {
     const releaseName = releaseNameMap[type][platform];
+    console.log(`Downloading release from https://raped.gay/releases/${releaseName}...`)
     const release = await axios.get(`https://raped.gay/releases/${releaseName}`, {responseType: 'arraybuffer'});
     const checksumMap = await getChecksumMap();
 
@@ -49,9 +50,9 @@ async function downloadRelease(type, downloadCache) {
         throw new Error(`Checksum mismatch for release ${releaseName}! Expected ${checksumMap[releaseName]}, got ${releaseHash}`)
     }
 
-    const stream = Readable.from(Buffer.from(release.data));
-
-    await stream.pipe(unzipper.Extract({path: path.join(releasesPath, releaseName.replaceAll('.zip', ''))})).promise();
+    const zip = new AdmZip(Buffer.from(release.data));
+    zip.extractAllTo(path.join(releasesPath, releaseName.replaceAll('.zip', '')), false);
+    fs.chmodSync(path.join(releasesPath, releaseName.replaceAll('.zip', ''), releaseName.replaceAll('.zip', '')), 0o755);
 
     releaseCheckEmitter.emit('up-to-date', releaseName);
     return {

@@ -6,3 +6,6 @@
 node_modules
 src/styles/output.css
 cache
+
+# System
+.DS_Store
