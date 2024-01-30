@@ -18,6 +18,12 @@ const updateEmitter = getEmitter()
 let launching = false;
 let config = {};
 
+ipcRenderer.on('process_running', () => {
+    launching = true
+    launchButton.innerHTML = 'Stop'
+    launchButton.className = 'btn btn-error w-full max-w-sm'
+})
+
 ipcRenderer.on('stdout', (event, data) => {
     launchButton.innerHTML = 'Stop'
     launchButton.className = 'btn btn-error w-full max-w-sm'
@@ -57,6 +63,7 @@ updateEmitter.on('up-to-date', () => {
 })
 
 ipcRenderer.send('get_config');
+ipcRenderer.send('check_for_process')
 
 ipcRenderer.on('config', (event, stringifiedConfig) => {
     config = JSON.parse(stringifiedConfig);

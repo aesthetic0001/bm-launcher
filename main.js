@@ -107,6 +107,10 @@ ipcMain.on('console_input', (event, data) => {
     write(data.trim() + (process.platform === 'win32' ? '\r\n' : '\n'))
 })
 
+ipcMain.on('check_for_process', (event) => {
+    if (typeof write === "function") event.reply('process_running')
+})
+
 launchEmitter.on('stdout', (data) => {
     if (data.match(/\x1b]0;.*?\x07/g, '')) {
         return
