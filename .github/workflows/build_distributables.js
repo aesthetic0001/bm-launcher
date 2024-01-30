@@ -54,7 +54,7 @@ const options = {
 
 // Promise is returned
 builder.build({
-    targets: Platform.MAC.createTarget(),
+    targets: [Platform.MAC.createTarget(), Platform.WINDOWS.createTarget(), Platform.LINUX.createTarget()],
     config: options
 })
     .then((result) => {
