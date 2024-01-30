@@ -17,6 +17,19 @@ function launchExecutable(executableName) {
     ptyProcess.onExit(({ exitCode, signal }) => {
         launchEmitter.emit('exit', exitCode);
     });
+
+    function write(data) {
+        ptyProcess.write(data);
+    }
+
+    function kill() {
+        ptyProcess.kill();
+    }
+
+    return {
+        write,
+        kill,
+    };
 }
 
 function getLaunchEmitter() {

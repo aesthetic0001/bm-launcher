@@ -11,23 +11,19 @@ const toastDiv = window.document.getElementById('toasts');
 const releasesPath = path.join(__dirname, '..', '..', '..', 'cache', 'releases');
 const updateEmitter = getEmitter()
 const launchEmitter = getLaunchEmitter()
-let launched = false;
+let launching = false;
 let config = {};
+let write, kill;
 
 launchEmitter.on('stdout', (data) => {
     console.log(`stdout: ${data}`);
-})
-
-launchEmitter.on('close', (code) => {
-    console.log(`child process close all stdio with code ${code}`);
-    launched = false
-    launchButton.innerHTML = 'Launch'
-    launchButton.className = 'btn btn-success w-full max-w-sm'
+    launchButton.innerHTML = 'Stop'
+    launchButton.className = 'btn btn-error w-full max-w-sm'
 })
 
 launchEmitter.on('exit', (code) => {
     console.log(`child process exited with code ${code}`);
-    launched = false
+    launching = false
     launchButton.innerHTML = 'Launch'
     launchButton.className = 'btn btn-success w-full max-w-sm'
 })
@@ -35,19 +31,19 @@ launchEmitter.on('exit', (code) => {
 updateEmitter.on('checking', () => {
     console.log('Checking for updates...')
     launchButton.innerHTML = 'Checking for updates...'
-    launchButton.className = 'btn btn-warning w-full max-w-sm'
+    launchButton.className = 'btn btn-disabled w-full max-w-sm'
 })
 
 updateEmitter.on('downloading', () => {
     console.log('Update available!')
     launchButton.innerHTML = 'Downloading update...'
-    launchButton.className = 'btn btn-warning w-full max-w-sm'
+    launchButton.className = 'btn btn-disabled w-full max-w-sm'
 })
 
 updateEmitter.on('up-to-date', () => {
     console.log('Update downloaded!')
     launchButton.innerHTML = 'Up to date!'
-    launchButton.className = 'btn btn-success w-full max-w-sm'
+    launchButton.className = 'btn btn-disabled w-full max-w-sm'
 })
 
 ipcRenderer.send('get_config');
@@ -69,7 +65,7 @@ bmKey.addEventListener('input', () => {
 })
 
 window.document.getElementById('launch').addEventListener('click', async () => {
-    if (bmKey.value.length === 0 && !launched) {
+    if (bmKey.value.length === 0 && !launching) {
         const toast = document.createElement('div')
         toast.className = "alert alert-error"
         toast.innerHTML = '<span>Please enter a key before launching!</span>'
@@ -79,13 +75,17 @@ window.document.getElementById('launch').addEventListener('click', async () => {
         }, 2500)
         return
     }
-    launched = !launched
-    if (launched) {
+    launching = !launching
+    if (launching) {
         launchButton.innerHTML = 'Launching...'
-        launchButton.className = 'btn btn-error w-full max-w-sm'
+        launchButton.className = 'btn btn-disabled w-full max-w-sm'
     } else {
         launchButton.innerHTML = 'Launch'
         launchButton.className = 'btn btn-success w-full max-w-sm'
+        kill()
+        write = null
+        kill = null
+        return
     }
     console.log('Preparing for launch...')
     const {
@@ -95,5 +95,7 @@ window.document.getElementById('launch').addEventListener('click', async () => {
     config.downloadCache[releaseName] = releaseHash
     fs.writeFileSync(path.join(releasesPath, releaseName.replaceAll('.zip', ''), 'lkey.txt'), bmKey.value)
     ipcRenderer.send('config', JSON.stringify(config))
-    launchExecutable(releaseName.replaceAll('.zip', ''))
+    const fns = launchExecutable(releaseName.replaceAll('.zip', ''))
+    write = fns.write
+    kill = fns.kill
 })
