@@ -11,8 +11,7 @@
     "tailwind": "npx tailwindcss -i ./src/styles/input.css -o ./src/styles/output.css --watch",
     "make": "npm run compile_css && electron-forge make",
     "package": "npm run compile_css && electron-forge package",
-    "build-web": "cp html out/html; rm -r out/html/startPage;",
-    "postinstall": "patch-package"
+    "build-web": "cp html out/html; rm -r out/html/startPage;"
   },
   "private": true,
   "dependencies": {

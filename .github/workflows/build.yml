@@ -24,10 +24,13 @@ jobs:
 
       - run: npm install
 
+      - run: npm run compile_css
+
       - name: Build for Windows
         run: |
           npx electron-forge package --platform win32
           cd out/bm-launcher-win32-x64/resources/app/; node-prune
+
       - name: Build for Linux
         run: |
           npx electron-forge package --platform linux
@@ -38,6 +41,7 @@ jobs:
         run: |
           npx electron-forge package --platform darwin
           cd out/bm-launcher-darwin-x64/bm-launcher.app/Contents/Resources/app/; node-prune
+
       - name: Create archives for new release
         run: |
           mv out/bm-launcher-win32-x64 bm-launcher-windows-x64
@@ -46,6 +50,7 @@ jobs:
           zip -r -y out/bm-launcher-windows-x64.zip bm-launcher-windows-x64/
           zip -r -y out/bm-launcher-linux-x64.zip bm-launcher-linux-x64/
           zip -r -y out/bm-launcher-macos-x64.zip bm-launcher-macos-x64/
+
       - name: Create release
         id: create_release
         uses: actions/create-release@v1
