@@ -3,7 +3,10 @@ const JSONEditor = require('jsoneditor')
 const {checkForUpdates, getConfigPath} = require("../../utils/releaseChecker");
 const fs = require("fs");
 const botType = window.document.getElementById('bot_type');
+const saveLocation = window.document.getElementById('savelocation');
 const launchTabs = window.document.getElementsByClassName('launch_menu');
+
+saveLocation.innerText = `Your configuration will be saved to ${getConfigPath(botType.value.toLowerCase())}. You can edit this file manually if you want a more thorough config.`
 
 for (const tab of launchTabs) {
     tab.addEventListener('click', () => {
