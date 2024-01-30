@@ -7,11 +7,8 @@
   "main": "main.js",
   "scripts": {
     "compile_css": "npx tailwindcss -i ./src/styles/input.css -o ./src/styles/output.css",
-    "start": "npm run compile_css && electron-forge start",
-    "tailwind": "npx tailwindcss -i ./src/styles/input.css -o ./src/styles/output.css --watch",
-    "make": "npm run compile_css && electron-forge make",
-    "package": "npm run compile_css && electron-forge package",
-    "build-web": "cp html out/html; rm -r out/html/startPage;"
+    "start": "npm run compile_css && electron .",
+    "tailwind": "npx tailwindcss -i ./src/styles/input.css -o ./src/styles/output.css --watch"
   },
   "private": true,
   "dependencies": {
@@ -25,24 +22,7 @@
     "tailwindcss": "^3.4.1"
   },
   "devDependencies": {
-    "@electron-forge/cli": "^7.2.0",
-    "@electron-forge/maker-zip": "^7.2.0",
     "electron": "^28.2.0",
     "electron-builder": "^24.9.1"
-  },
-  "config": {
-    "forge": {
-      "packagerConfig": {},
-      "makers": [
-        {
-          "name": "@electron-forge/maker-zip",
-          "platforms": [
-            "darwin",
-            "linux",
-            "win32"
-          ]
-        }
-      ]
-    }
   }
 }
