@@ -1,0 +1,82 @@
+name: Build Releases
+
+on: push
+
+jobs:
+  build-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+
+      - name: Install node-prune
+        run: curl -sf https://gobinaries.com/tj/node-prune | sh
+
+      - run: npm install
+
+      - name: Build for Windows
+        run: |
+          npx electron-forge package --platform win32
+          cd out/bm-launcher-win32-x64/resources/app/; node-prune
+      - name: Build for Linux
+        run: |
+          npx electron-forge package --platform linux
+          cd out/bm-launcher-linux-x64/resources/app/; node-prune
+      - run: chmod +x out/bm-launcher-linux-x64/bm-launcher
+
+      - name: Build for macOS
+        run: |
+          npx electron-forge package --platform darwin
+          cd out/bm-launcher-darwin-x64/bm-launcher.app/Contents/Resources/app/; node-prune
+      - name: Create archives for new release
+        run: |
+          mv out/bm-launcher-win32-x64 bm-launcher-windows-x64
+          mv out/bm-launcher-linux-x64 bm-launcher-linux-x64
+          mv out/bm-launcher-darwin-x64 bm-launcher-macos-x64
+          zip -r -y out/bm-launcher-windows-x64.zip bm-launcher-windows-x64/
+          zip -r -y out/bm-launcher-linux-x64.zip bm-launcher-linux-x64/
+          zip -r -y out/bm-launcher-macos-x64.zip bm-launcher-macos-x64/
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: github-${{ github.run_number }}
+          release_name: GitHub build ${{ github.run_number }}
+          body: github-${{ github.run_number }}
+
+      - name: Upload Windows build
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: out/bm-launcher-windows-x64.zip
+          asset_name: bm-launcher-windows-x64-v${{ github.run_number }}.zip
+          asset_content_type: application/zip
+
+      - name: Upload Linux build
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: out/bm-launcher-linux-x64.zip
+          asset_name: bm-launcher-linux-x64-v${{ github.run_number }}.zip
+          asset_content_type: application/zip
+
+      - name: Upload macOS build
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: out/bm-launcher-macos-x64.zip
+          asset_name: bm-launcher-macos-x64-v${{ github.run_number }}.zip
+          asset_content_type: application/zip
