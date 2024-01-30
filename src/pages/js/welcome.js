@@ -1,6 +1,6 @@
 const { ipcRenderer } = require('electron');
-const $ = require('jquery');
+const getStartedButton = window.document.getElementById('get_started');
 
-$('#get_started').click(() => {
+getStartedButton.addEventListener('click', () => {
     ipcRenderer.send('get_started');
 })

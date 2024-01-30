@@ -12,12 +12,18 @@
     <div class="hero-content text-center">
         <div class="max-w-md">
             <h1 class="text-5xl font-bold">Welcome to <span class="text-white">bin</span><span class="text-redorange">master</span></h1>
-            <p class="py-6">This seems to be your first time running the launcher! If you encounter any issues, please remember to first read the <a href="https://github.com/aesthetic0001/binmaster-docs" class="link link-primary">documentation</a> before contacting us on Discord!</p>
+            <p class="py-6">This seems to be your first time running the launcher! If you encounter any issues, please remember to first read the <a href class="link link-primary" id="documentation">documentation</a> before contacting us on Discord!</p>
             <button class="btn btn-primary" id="get_started">Get Started</button>
         </div>
     </div>
     <script>require('./js/shared')</script>
     <script>require('./js/welcome')</script>
 </div>
+<script>
+    const documentation = document.getElementById('documentation');
+    documentation.addEventListener('click', () => {
+        require('electron').shell.openExternal('https://github.com/aesthetic0001/binmaster-docs');
+    });
+</script>
 </body>
 </html>
