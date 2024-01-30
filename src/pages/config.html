@@ -43,8 +43,18 @@
         </svg>
     </div>
 </div>
-<div class="relative grid grid-rows-5 grid-cols-6 gap-5 px-10 py-5 h-screen">
-    <div id="monaco">
+<div class="relative grid grid-rows-5 grid-cols-6 gap-5 h-screen">
+    <div id="container" style="height: 500px; width: 100%" class="relative col-span-3 row-span-3 m-auto xl:-translate-y-16">
+    </div>
+    <div class="relative col-span-2 py-20">
+        <h1 class="text-3xl font-bold text-center">Configure Bot</h1>
+        <div class="label">
+            <span class="label-text">Bot Type</span>
+        </div>
+        <select id="bot_type" class="select select-bordered w-full max-w-sm">
+            <option>Auction</option>
+            <option>Slayer</option>
+        </select>
     </div>
 </div>
 <script defer>require('./js/shared')</script>

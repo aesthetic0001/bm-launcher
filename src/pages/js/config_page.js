@@ -1,5 +1,13 @@
 const {ipcRenderer} = require('electron');
-const config_page = require('monaco-editor');
+const loader = require('monaco-loader')
+
+loader().then((monaco) => {
+    const editor = monaco.editor.create(document.getElementById('container'), {
+        language: 'javascript',
+        theme: 'vs-dark',
+        automaticLayout: true
+    })
+})
 
 const launchTabs = window.document.getElementsByClassName('launch_menu');
 
@@ -8,8 +16,3 @@ for (const tab of launchTabs) {
         ipcRenderer.send('launch_menu');
     })
 }
-
-config_page.editor.create(document.getElementById('monaco'), {
-    value: 'function x() {\nconsole.log("Hello world!");\n}',
-    language: 'javascript'
-});
