@@ -2,7 +2,6 @@ const {app, BrowserWindow} = require('electron/main')
 const {ipcMain} = require('electron')
 const path = require('node:path')
 const fs = require("fs");
-const configCache = require(path.join(__dirname, 'cache', 'config.json'))
 const {launchExecutable, getLaunchEmitter} = require("./src/utils/launchExecutable");
 
 if (!fs.existsSync(path.join(__dirname, 'cache'))) {
@@ -18,6 +17,8 @@ if (!fs.existsSync(path.join(__dirname, 'cache'))) {
         downloadCache: {}
     }))
 }
+
+const configCache = require(path.join(__dirname, 'cache', 'config.json'))
 
 const configProxy = new Proxy(configCache, {
     set: (target, p, value) => {
@@ -97,7 +98,7 @@ ipcMain.on('kill', () => {
 })
 
 ipcMain.on('console_input', (event, data) => {
-    write(data.trim() + process.platform === 'win32' ? '\r\n' : '\n')
+    write(data.trim() + '\n')
 })
 
 launchEmitter.on('stdout', (data) => {
