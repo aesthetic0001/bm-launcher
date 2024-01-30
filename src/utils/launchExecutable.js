@@ -1,26 +1,21 @@
-const { spawn } = require('child_process');
+const pty = require('node-pty');
 const path = require("path");
 const launchEmitter = new (require('events'))();
 const releasesPath = path.join(__dirname, '..', '..', 'cache', 'releases');
 
 function launchExecutable(executableName) {
-    const child = spawn(`./${executableName}`, {
-        detached: true,
+    const ptyProcess = pty.spawn(`./${executableName}`, [], {
+        name: 'xterm-color',
         cwd: path.join(releasesPath, executableName),
+        env: process.env
     });
 
-    child.unref();
-
-    child.stdout.on('data', (data) => {
+    ptyProcess.onData(data => {
         launchEmitter.emit('stdout', data);
-    })
-
-    child.on('close', (code) => {
-        launchEmitter.emit('close', code);
     });
 
-    child.on('exit', (code) => {
-        launchEmitter.emit('exit', code);
+    ptyProcess.onExit(({ exitCode, signal }) => {
+        launchEmitter.emit('exit', exitCode);
     });
 }
 
