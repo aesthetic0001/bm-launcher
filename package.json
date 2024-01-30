@@ -9,16 +9,14 @@
     "tailwind": "npx tailwindcss -i ./src/styles/input.css -o ./src/styles/output.css --watch"
   },
   "private": true,
-  "devDependencies": {
+  "dependencies": {
     "adm-zip": "^0.5.10",
     "ansi-to-html": "^0.7.2",
     "axios": "^1.6.7",
     "daisyui": "^4.6.1",
     "electron": "^28.2.0",
+    "monaco-loader": "^1.0.0",
     "node-pty": "1.1.0-beta6",
     "tailwindcss": "^3.4.1"
-  },
-  "dependencies": {
-    "monaco-loader": "^1.0.0"
   }
 }
