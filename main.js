@@ -69,5 +69,17 @@ ipcMain.on('get_started', () => {
 })
 
 ipcMain.on('get_config', (event) => {
-    event.returnValue = launcherConfig
+    event.reply('config', JSON.stringify(launcherConfig))
+})
+
+ipcMain.on('bm_key', (event, key) => {
+    launcherConfig.cachedKey = key
+})
+
+ipcMain.on('bot_type', (event, mode) => {
+    launcherConfig.cachedMode = mode
+})
+
+ipcMain.on('launch', () => {
+    console.log("launch")
 })

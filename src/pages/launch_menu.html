@@ -55,7 +55,7 @@
         <div class="label">
             <span class="label-text">Bot Type</span>
         </div>
-        <select class="select select-bordered w-full max-w-sm">
+        <select id="bot_type" class="select select-bordered w-full max-w-sm">
             <option>Auction</option>
             <option>Slayer</option>
         </select>
@@ -63,17 +63,19 @@
             <div class="label">
                 <span class="label-text">BinMaster Key</span>
             </div>
-            <input type="text" placeholder="Enter your key..." class="input input-bordered w-full max-w-sm"/>
+            <input id="bm_key" type="text" placeholder="Enter your key..." class="input input-bordered w-full max-w-sm"/>
         </label>
         <div class="py-3">
-            <button class="btn btn-primary w-full max-w-sm">Launch</button>
+            <button class="btn btn-primary w-full max-w-sm" id="launch">Launch</button>
         </div>
     </div>
 </div>
-<script>
+<script defer>require('./js/shared')</script>
+<script defer>require('./js/launch_menu')</script>
+<script defer>
     const discord = document.getElementById("discord");
     discord.addEventListener("click", () => {
-        window.open("https://discord.gg/binmaster", "_blank");
+        require('electron').shell.openExternal("https://discord.gg/binmaster");
     });
 </script>
 </body>
