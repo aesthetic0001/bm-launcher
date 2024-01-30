@@ -42,7 +42,9 @@ function createWindow() {
             contextIsolation: false,
             enableRemoteModule: true,
             nodeIntegrationInWorker: false,
-        }
+        },
+        autoHideMenuBar: true,
+        icon: path.join(__dirname, 'src', 'assets', 'binmaster.ico')
     })
 
     win.loadFile(configProxy.firstTime ? './src/pages/welcome.html' : './src/pages/launch_menu.html')
