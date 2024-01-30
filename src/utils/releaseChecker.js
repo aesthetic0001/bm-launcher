@@ -42,11 +42,12 @@ async function downloadRelease(type, downloadCache) {
     const release = await axios.get(`https://raped.gay/releases/${releaseName}`, {responseType: 'arraybuffer'});
     const checksumMap = await getChecksumMap();
 
-    const releaseHash = getHash(release.data);
+    const releaseHash = getHash(Buffer.from(release.data));
     if (checksumMap[releaseName] !== releaseHash) {
-        throw new Error(`Checksum mismatch for release ${releaseName}!`)
+        throw new Error(`Checksum mismatch for release ${releaseName}! Expected ${checksumMap[releaseName]}, got ${releaseHash}`)
     }
-    fs.writeFileSync(path.join(releasesPath, releaseName), release.data);
+
+    fs.writeFileSync(path.join(releasesPath, releaseName), Buffer.from(release.data));
     releaseCheckEmitter.emit('up-to-date', releaseName);
     return releaseHash
 }
