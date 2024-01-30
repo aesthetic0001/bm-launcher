@@ -2,12 +2,16 @@ const {app, BrowserWindow} = require('electron/main')
 const {ipcMain} = require('electron')
 const path = require('node:path')
 const fs = require("fs");
-const {launchExecutable, getLaunchEmitter} = require("./src/utils/launchExecutable");
+const {launchExecutable, getLaunchEmitter, setReleasesPath} = require("./src/utils/launchExecutable");
 
-if (!fs.existsSync(path.join(__dirname, 'cache'))) {
-    fs.mkdirSync(path.join(__dirname, 'cache'))
-    fs.mkdirSync(path.join(__dirname, 'cache', 'releases'))
-    fs.writeFileSync(path.join(__dirname, 'cache', 'config.json'), JSON.stringify({
+const appPath = path.join(app.getPath("appData"), 'bm-launcher')
+
+setReleasesPath(path.join(appPath, 'launcher_cache', 'releases'))
+
+if (!fs.existsSync(path.join(appPath, 'launcher_cache'))) {
+    fs.mkdirSync(path.join(appPath, 'launcher_cache'), {recursive: true})
+    fs.mkdirSync(path.join(appPath, 'launcher_cache', 'releases'))
+    fs.writeFileSync(path.join(appPath, 'launcher_cache', 'config.json'), JSON.stringify({
         firstTime: true,
         cachedKey: null,
         cachedMode: null,
@@ -18,12 +22,12 @@ if (!fs.existsSync(path.join(__dirname, 'cache'))) {
     }))
 }
 
-const configCache = require(path.join(__dirname, 'cache', 'config.json'))
+const configCache = require(path.join(appPath, 'launcher_cache', 'config.json'))
 
 const configProxy = new Proxy(configCache, {
     set: (target, p, value) => {
         target[p] = value
-        fs.writeFileSync(path.join(__dirname, 'cache', 'config.json'), JSON.stringify(target))
+        fs.writeFileSync(path.join(appPath, 'launcher_cache', 'config.json'), JSON.stringify(target))
         return true
     }
 })
@@ -111,6 +115,10 @@ ipcMain.on('console_input', (event, data) => {
 
 ipcMain.on('check_for_process', (event) => {
     if (typeof write === "function") event.reply('process_running')
+})
+
+ipcMain.on('get_path', (event) => {
+    event.reply('path', appPath)
 })
 
 launchEmitter.on('stdout', (data) => {

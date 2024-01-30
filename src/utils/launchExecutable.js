@@ -1,7 +1,11 @@
 const pty = require('node-pty');
 const path = require("path");
 const launchEmitter = new (require('events'))();
-const releasesPath = path.join(__dirname, '..', '..', 'cache', 'releases');
+let releasesPath
+
+function setReleasesPath(newReleasesPath) {
+    releasesPath = newReleasesPath;
+}
 
 function launchExecutable(executableName) {
     const terminalExecutable = process.platform === 'win32' ? 'cmd.exe' : 'zsh';
@@ -29,7 +33,7 @@ function launchExecutable(executableName) {
         launchEmitter.emit('stdout', data);
     });
 
-    ptyProcess.onExit(({ exitCode, signal }) => {
+    ptyProcess.onExit(({exitCode, signal}) => {
         launchEmitter.emit('exit', exitCode);
     });
 
@@ -54,4 +58,5 @@ function getLaunchEmitter() {
 module.exports = {
     getLaunchEmitter,
     launchExecutable,
+    setReleasesPath
 }

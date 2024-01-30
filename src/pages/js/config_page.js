@@ -1,12 +1,12 @@
 const {ipcRenderer} = require('electron');
 const JSONEditor = require('jsoneditor')
-const {checkForUpdates, getConfigPath} = require("../../utils/releaseChecker");
+const {once} = require("events");
+const {checkForUpdates, getConfigPath, setReleasesPath} = require("../../utils/releaseChecker");
 const fs = require("fs");
+const path = require("path");
 const botType = window.document.getElementById('bot_type');
 const saveLocation = window.document.getElementById('savelocation');
 const launchTabs = window.document.getElementsByClassName('launch_menu');
-
-saveLocation.innerText = `Your configuration will be saved to ${getConfigPath(botType.value.toLowerCase())}. You can edit this file manually if you want a more thorough config.`
 
 for (const tab of launchTabs) {
     tab.addEventListener('click', () => {
@@ -16,7 +16,16 @@ for (const tab of launchTabs) {
 
 let readyForModification = false;
 
-ipcRenderer.once('config', async (event, data) => {
+async function main() {
+    ipcRenderer.send('get_path');
+    const [event, appPath] = await once(ipcRenderer, 'path')
+    ipcRenderer.send('get_config');
+    const [event2, data] = await once(ipcRenderer, 'config')
+
+    setReleasesPath(path.join(appPath, 'launcher_cache', 'releases'))
+
+    saveLocation.innerText = `Your configuration will be saved to ${getConfigPath(botType.value.toLowerCase())}. You can edit this file manually if you want a more thorough config.`
+
     const config = JSON.parse(data);
 
     let releaseConfig
@@ -53,6 +62,6 @@ ipcRenderer.once('config', async (event, data) => {
     botType.addEventListener('change', async () => {
         await setReleaseConfig()
     })
-})
+}
 
-ipcRenderer.send('get_config');
+main()

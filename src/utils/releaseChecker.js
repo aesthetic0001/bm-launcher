@@ -3,11 +3,14 @@ const AdmZip = require("adm-zip");
 const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
-const { Readable } = require('stream');
 
-const releasesPath = path.join(__dirname, '..', '..', 'cache', 'releases');
+let releasesPath
 const platform = process.platform;
 const releaseCheckEmitter = new (require('events'))();
+
+function setReleasesPath(newReleasesPath) {
+    releasesPath = newReleasesPath;
+}
 
 function getHash(fileBuffer) {
     const hash = crypto.createHash('sha256');
@@ -98,5 +101,6 @@ function getEmitter() {
 module.exports = {
     checkForUpdates,
     getEmitter,
-    getConfigPath
+    getConfigPath,
+    setReleasesPath
 }
