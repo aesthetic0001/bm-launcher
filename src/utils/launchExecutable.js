@@ -4,11 +4,24 @@ const launchEmitter = new (require('events'))();
 const releasesPath = path.join(__dirname, '..', '..', 'cache', 'releases');
 
 function launchExecutable(executableName) {
-    const ptyProcess = pty.spawn(`./${executableName}`, [], {
+    const terminalExecutable = process.platform === 'win32' ? 'cmd.exe' : 'zsh';
+    const ptyProcess = pty.spawn(terminalExecutable, [], {
         name: 'xterm-color',
         cwd: path.join(releasesPath, executableName),
         env: process.env
     });
+
+    switch (process.platform) {
+        case 'win32':
+            ptyProcess.write(`.\\${executableName}\r`);
+            break;
+        case 'linux':
+            ptyProcess.write(`./${executableName}\n`);
+            break;
+        case 'darwin':
+            ptyProcess.write(`./${executableName}\n`);
+            break;
+    }
 
     ptyProcess.onData(data => {
         launchEmitter.emit('stdout', data);

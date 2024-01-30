@@ -11,6 +11,7 @@ const bmKey = window.document.getElementById('bm_key');
 const launchButton = window.document.getElementById('launch');
 const toastDiv = window.document.getElementById('toasts');
 const consoleDiv = window.document.getElementById('console_output');
+const consoleInput = window.document.getElementById('console_input');
 
 const releasesPath = path.join(__dirname, '..', '..', '..', 'cache', 'releases');
 const updateEmitter = getEmitter()
@@ -77,6 +78,14 @@ bmKey.addEventListener('input', () => {
     ipcRenderer.send('config', JSON.stringify(config))
 })
 
+consoleInput.addEventListener('keyup', (e) => {
+    if (write && e.key === 'Enter' && launchButton.innerHTML === 'Stop') {
+        console.log(`Sending ${consoleInput.value}`)
+        write(consoleInput.value + '\r')
+        consoleInput.value = ''
+    }
+})
+
 window.document.getElementById('launch').addEventListener('click', async () => {
     if (bmKey.value.length === 0 && !launching) {
         const toast = document.createElement('div')
@@ -92,11 +101,11 @@ window.document.getElementById('launch').addEventListener('click', async () => {
     if (launching) {
         launchButton.innerHTML = 'Launching...'
         launchButton.className = 'btn btn-disabled w-full max-w-sm'
+        consoleDiv.innerHTML = ''
     } else {
         launchButton.innerHTML = 'Launch'
         launchButton.className = 'btn btn-success w-full max-w-sm'
         kill()
-        consoleDiv.innerHTML = ''
         write = null
         kill = null
         return

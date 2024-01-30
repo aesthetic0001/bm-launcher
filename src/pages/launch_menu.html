@@ -6,7 +6,7 @@
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';"/>
     <!--  daisyUI stylesheet -->
     <link rel="stylesheet" href="../styles/output.css"/>
-<!--    jetbrains-mono -->
+    <!--    jetbrains-mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
@@ -45,15 +45,8 @@
 </div>
 <div class="relative grid grid-rows-5 grid-cols-6 gap-5 px-10 py-5 h-screen">
     <!--    box for console output -->
-    <div id="console_output" class="relative bg-base-200 row-span-3 col-span-4 rounded-lg overflow-y-scroll">
-        <div class="absolute bottom-0 right-0">
-            <label class="form-control w-full max-w-lg">
-                <div class="label">
-                    <span class="label-text">Write something to the console</span>
-                </div>
-                <input type="text" placeholder="Enter a command" class="input input-bordered w-full max-w-lg"/>
-            </label>
-        </div>
+    <div id="console_output" class="relative bg-base-300 row-span-3 col-span-4 rounded-lg overflow-y-scroll">
+
     </div>
     <div class="relative col-span-2 m-auto">
         <h1 class="text-3xl font-bold text-center">Launch Options</h1>
@@ -68,11 +61,18 @@
             <div class="label">
                 <span class="label-text">BinMaster Key</span>
             </div>
-            <input id="bm_key" type="text" placeholder="Enter your key..." class="input input-bordered w-full max-w-sm"/>
+            <input id="bm_key" type="text" placeholder="Enter your key..."
+                   class="input input-bordered w-full max-w-sm"/>
         </label>
         <div class="py-3">
             <button class="btn btn-success w-full max-w-sm" id="launch">Launch</button>
         </div>
+    </div>
+    <div class="row-span-1 col-span-3">
+        <div class="label">
+            <span class="label-text">Write something to the console</span>
+        </div>
+        <input type="text" placeholder="Enter a command" class="input input-bordered w-full max-w-lg" id="console_input"/>
     </div>
 </div>
 <script defer>require('./js/shared')</script>
