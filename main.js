@@ -102,6 +102,9 @@ ipcMain.on('console_input', (event, data) => {
 })
 
 launchEmitter.on('stdout', (data) => {
+    if (data.match(/\x1b]0;.*?\x07/g, '')) {
+        return
+    }
     getCurrentWindow().webContents.send('stdout', data)
 })
 
