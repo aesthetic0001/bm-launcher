@@ -54,7 +54,10 @@ async function downloadRelease(type, downloadCache) {
     await stream.pipe(unzipper.Extract({path: path.join(releasesPath, releaseName.replaceAll('.zip', ''))})).promise();
 
     releaseCheckEmitter.emit('up-to-date', releaseName);
-    return releaseHash
+    return {
+        releaseName,
+        releaseHash,
+    }
 }
 
 async function checkForUpdates(type, downloadCache) {
@@ -74,7 +77,10 @@ async function checkForUpdates(type, downloadCache) {
         return await downloadRelease(type);
     }
     releaseCheckEmitter.emit('up-to-date');
-    return releaseHash
+    return {
+        releaseName,
+        releaseHash,
+    }
 }
 
 function getEmitter() {

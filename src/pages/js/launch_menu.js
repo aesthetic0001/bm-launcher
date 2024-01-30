@@ -37,12 +37,12 @@ ipcRenderer.on('config', (event, stringifiedConfig) => {
 
 botType.addEventListener('input', () => {
     config.cachedMode = botType.value;
-    ipcRenderer.send('bot_type', botType.value);
+    ipcRenderer.send('config', JSON.stringify(config))
 })
 
 bmKey.addEventListener('input', () => {
     config.cachedKey = bmKey.value;
-    ipcRenderer.send('bm_key', bmKey.value);
+    ipcRenderer.send('config', JSON.stringify(config))
 })
 
 window.document.getElementById('launch').addEventListener('click', async () => {
@@ -65,5 +65,10 @@ window.document.getElementById('launch').addEventListener('click', async () => {
         launchButton.className = 'btn btn-success w-full max-w-sm'
     }
     console.log('Preparing for launch...')
-    await checkForUpdates(botType.value.toLowerCase(), config.downloadCache)
+    const {
+        releaseName,
+        releaseHash
+    } = await checkForUpdates(botType.value.toLowerCase(), config.downloadCache)
+    config.downloadCache[releaseName] = releaseHash
+    ipcRenderer.send('config', JSON.stringify(config))
 })

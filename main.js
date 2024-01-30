@@ -27,8 +27,6 @@ const configProxy = new Proxy(configCache, {
     }
 })
 
-global.launcherConfig = configProxy
-
 function createWindow() {
     const win = new BrowserWindow({
         width: 800,
@@ -42,7 +40,7 @@ function createWindow() {
 
     win.webContents.openDevTools()
 
-    win.loadFile(launcherConfig.firstTime ? './src/pages/welcome.html' : './src/pages/launch_menu.html')
+    win.loadFile(configProxy.firstTime ? './src/pages/welcome.html' : './src/pages/launch_menu.html')
 }
 
 function getCurrentWindow() {
@@ -66,17 +64,16 @@ app.on('window-all-closed', () => {
 
 ipcMain.on('get_started', () => {
     getCurrentWindow().loadFile('./src/pages/launch_menu.html')
-    launcherConfig.firstTime = false
+    configProxy.firstTime = false
 })
 
 ipcMain.on('get_config', (event) => {
-    event.reply('config', JSON.stringify(launcherConfig))
+    event.reply('config', JSON.stringify(configProxy))
 })
 
-ipcMain.on('bm_key', (event, key) => {
-    launcherConfig.cachedKey = key
-})
-
-ipcMain.on('bot_type', (event, mode) => {
-    launcherConfig.cachedMode = mode
+ipcMain.on('config', (event, cfg) => {
+    const config = JSON.parse(cfg)
+    for (const key in config) {
+        configProxy[key] = config[key]
+    }
 })
