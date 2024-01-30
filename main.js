@@ -1,4 +1,5 @@
-const { app, BrowserWindow } = require('electron/main')
+const {app, BrowserWindow} = require('electron/main')
+const {ipcMain} = require('electron')
 const path = require('node:path')
 const fs = require("fs");
 
@@ -26,17 +27,25 @@ const configProxy = new Proxy(configCache, {
 
 global.launcherConfig = configProxy
 
-function createWindow () {
+function createWindow() {
     const win = new BrowserWindow({
         width: 800,
         height: 600,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
-            nodeIntegration: true
+            nodeIntegration: true,
+            contextIsolation: false,
+            enableRemoteModule: true,
         }
     })
 
+    win.webContents.openDevTools()
+
     win.loadFile(launcherConfig.firstTime ? './src/pages/welcome.html' : './src/pages/launch_menu.html')
+}
+
+function getCurrentWindow() {
+    return BrowserWindow.getFocusedWindow()
 }
 
 app.whenReady().then(() => {
@@ -52,4 +61,13 @@ app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         app.quit()
     }
+})
+
+ipcMain.on('get_started', () => {
+    getCurrentWindow().loadFile('./src/pages/launch_menu.html')
+    launcherConfig.firstTime = false
+})
+
+ipcMain.on('get_config', (event) => {
+    event.returnValue = launcherConfig
 })
