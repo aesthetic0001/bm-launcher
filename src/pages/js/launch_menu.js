@@ -1,13 +1,36 @@
 const {ipcRenderer} = require('electron');
 const {checkForUpdates, getEmitter} = require("../../utils/releaseChecker");
+const {launchExecutable, getLaunchEmitter} = require("../../utils/launchExecutable");
+const fs = require("fs");
+const path = require("path");
 const botType = window.document.getElementById('bot_type');
 const bmKey = window.document.getElementById('bm_key');
 const launchButton = window.document.getElementById('launch');
 const toastDiv = window.document.getElementById('toasts');
 
+const releasesPath = path.join(__dirname, '..', '..', '..', 'cache', 'releases');
 const updateEmitter = getEmitter()
+const launchEmitter = getLaunchEmitter()
 let launched = false;
 let config = {};
+
+launchEmitter.on('stdout', (data) => {
+    console.log(`stdout: ${data}`);
+})
+
+launchEmitter.on('close', (code) => {
+    console.log(`child process close all stdio with code ${code}`);
+    launched = false
+    launchButton.innerHTML = 'Launch'
+    launchButton.className = 'btn btn-success w-full max-w-sm'
+})
+
+launchEmitter.on('exit', (code) => {
+    console.log(`child process exited with code ${code}`);
+    launched = false
+    launchButton.innerHTML = 'Launch'
+    launchButton.className = 'btn btn-success w-full max-w-sm'
+})
 
 updateEmitter.on('checking', () => {
     console.log('Checking for updates...')
@@ -70,5 +93,7 @@ window.document.getElementById('launch').addEventListener('click', async () => {
         releaseHash
     } = await checkForUpdates(botType.value.toLowerCase(), config.downloadCache)
     config.downloadCache[releaseName] = releaseHash
+    fs.writeFileSync(path.join(releasesPath, releaseName.replaceAll('.zip', ''), 'lkey.txt'), bmKey.value)
     ipcRenderer.send('config', JSON.stringify(config))
+    launchExecutable(releaseName.replaceAll('.zip', ''))
 })
