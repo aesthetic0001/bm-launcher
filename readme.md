@@ -1,5 +1,5 @@
 # binmaster launcher
 
-a simple launcher for binmaster products
+a very complicated launcher for binmaster products
 
 ---
