@@ -18,12 +18,6 @@ jobs:
         with:
           node-version: 18.x
 
-      - name: Install Brew
-        run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
-      - name: Install Wine
-        run: brew install --cask xquartz && brew install --cask wine-stable
-
       - run: npm install
 
       - run: npm run compile_css
