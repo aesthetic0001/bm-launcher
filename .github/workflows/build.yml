@@ -38,3 +38,9 @@ jobs:
           append_body: true
           files: |
             ./out/*
+
+      - name: Upload Build Artifacts
+        uses: upload-artifact@v4
+        with:
+          name: ${{ matrix.os }}
+          path: ./out/*
