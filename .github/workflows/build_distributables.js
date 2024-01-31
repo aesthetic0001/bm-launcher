@@ -71,9 +71,7 @@ async function main() {
     for (const target of targets) {
         console.log(target)
         const outpaths = await builder.build({
-            targets: [
-                target
-            ],
+            targets: target,
             config: options
         })
         console.log(outpaths)
