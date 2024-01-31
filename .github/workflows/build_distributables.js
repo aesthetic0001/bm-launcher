@@ -26,7 +26,9 @@ const options = {
         target: 'dmg',
     },
     linux: {
-        target: ["AppImage", "deb"],
+        executableName: "BinMaster Launcher",
+        artifactName: "binmaster-launcher-${version}.${ext}",
+        target: ["deb"],
     },
     dmg: {
         contents: [
@@ -72,6 +74,7 @@ async function main() {
     for (const outpath of outpaths) {
         fs.renameSync(outpath, path.join(__dirname, '..', '..', 'out', path.basename(outpath)))
     }
+    console.log(outpaths)
 }
 
 main()
