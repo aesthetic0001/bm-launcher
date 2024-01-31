@@ -74,6 +74,7 @@ async function main() {
             targets: target,
             config: options
         })
+        console.log(outpaths)
         fs.renameSync(outpaths[0], path.join(__dirname, '..', '..', 'out', path.basename(outpaths[0])))
     }
 }
