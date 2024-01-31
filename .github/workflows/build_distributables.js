@@ -25,11 +25,6 @@ const options = {
     mac: {
         target: 'dmg',
     },
-    linux: {
-        executableName: "BinMaster Launcher",
-        artifactName: "binmaster-launcher-${version}.${ext}",
-        target: ["deb"],
-    },
     dmg: {
         contents: [
             {
@@ -56,8 +51,8 @@ const options = {
 
 const targets = builder.createTargets([
         Platform.WINDOWS,
-        Platform.MAC,
-        Platform.LINUX]
+        Platform.MAC
+    ]
     , null, "x64")
 
 if (fs.existsSync(path.join(__dirname, '..', '..', 'out'))) {
