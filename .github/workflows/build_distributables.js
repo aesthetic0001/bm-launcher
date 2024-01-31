@@ -21,12 +21,15 @@ const options = {
     },
     win: {
         target: 'msi',
+        defaultArch: "x64",
     },
     mac: {
         target: 'dmg',
+        defaultArch: "x64",
     },
     linux: {
         target: ["AppImage", "deb"],
+        defaultArch: "x64",
     },
     dmg: {
         contents: [
@@ -68,10 +71,10 @@ async function main() {
     for (const target of targets) {
         console.log(target)
         const outpaths = await builder.build({
-            targets: target,
-            config: options,
-            arm64: true,
-            x64: true,
+            targets: [
+                target
+            ],
+            config: options
         })
         console.log(outpaths)
         fs.renameSync(outpaths[0], path.join(__dirname, '..', '..', 'out', path.basename(outpaths[0])))
