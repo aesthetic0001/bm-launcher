@@ -1,6 +1,7 @@
 const builder = require("electron-builder")
+const fs = require("fs");
 const Platform = builder.Platform
-
+const path = require("path")
 /**
  * @type {import('electron-builder').Configuration}
  * @see https://www.electron.build/configuration/configuration
@@ -8,7 +9,7 @@ const Platform = builder.Platform
 const options = {
     extends: null,
     productName: "BinMaster Launcher",
-    artifactName: "${productName}-${version}.${ext}",
+    artifactName: "binmaster-launcher-${version}.${ext}",
     asar: true,
     compression: "maximum",
     removePackageScripts: true,
@@ -51,15 +52,26 @@ const options = {
     }
 };
 
-const targets = [Platform.WINDOWS.createTarget()]
+const targets = [
+    Platform.WINDOWS.createTarget(),
+    Platform.MAC.createTarget(),
+    Platform.LINUX.createTarget()
+]
+
+if (fs.existsSync(path.join(__dirname, '..', '..', 'out'))) {
+    fs.rmSync(path.join(__dirname, '..', '..', 'out'), {recursive: true})
+}
+
+fs.mkdirSync(path.join(__dirname, '..', '..', 'out'))
 
 async function main() {
     for (const target of targets) {
-        const path = await builder.build({
+        console.log(target)
+        const outpaths = await builder.build({
             targets: target,
             config: options
         })
-        console.log(path)
+        fs.renameSync(outpaths[0], path.join(__dirname, '..', '..', 'out', path.basename(outpaths[0])))
     }
 }
 
