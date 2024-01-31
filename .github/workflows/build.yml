@@ -5,7 +5,10 @@ on: push
 jobs:
   build-job:
     permissions: write-all
-    runs-on: macos-14
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-14, macos-13, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -31,5 +34,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
+          append_body: true
           files: |
             ./out/*

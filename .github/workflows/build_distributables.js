@@ -9,7 +9,7 @@ const path = require("path")
 const options = {
     extends: null,
     productName: "BinMaster Launcher",
-    artifactName: "binmaster-launcher-${version}.${ext}",
+    artifactName: "binmaster-launcher-${version}-${arch}.${ext}",
     asar: true,
     compression: "maximum",
     removePackageScripts: true,
@@ -24,6 +24,11 @@ const options = {
     },
     mac: {
         target: 'dmg',
+    },
+    linux: {
+        executableName: "BinMaster Launcher",
+        artifactName: "binmaster-launcher-${version}-${arch}.${ext}",
+        target: ["deb"],
     },
     dmg: {
         contents: [
@@ -49,15 +54,11 @@ const options = {
     }
 };
 
-const targetWin = builder.createTargets([
-        Platform.WINDOWS,
-    ], null, "x64")
-
-const targetMac = builder.createTargets([
-    Platform.MAC,
-], null, "arm64")
-
-const targets = [targetWin, targetMac]
+const targets = {
+    win32: Platform.WINDOWS.createTarget(),
+    linux: Platform.LINUX.createTarget(),
+    darwin: Platform.MAC.createTarget()
+}
 
 if (fs.existsSync(path.join(__dirname, '..', '..', 'out'))) {
     fs.rmSync(path.join(__dirname, '..', '..', 'out'), {recursive: true})
@@ -66,18 +67,12 @@ if (fs.existsSync(path.join(__dirname, '..', '..', 'out'))) {
 fs.mkdirSync(path.join(__dirname, '..', '..', 'out'))
 
 async function main() {
-    const outpaths = []
-    for (const target of targets) {
-        const result = await builder.build({
-            options,
-            targets: target
-        })
-        outpaths.push(result[0])
-    }
-    for (const outpath of outpaths) {
-        fs.renameSync(outpath, path.join(__dirname, '..', '..', 'out', path.basename(outpath)))
-    }
+    const outpaths = await builder.build({
+        ...options,
+        targets: targets[process.platform]
+    })
     console.log(outpaths)
+    fs.renameSync(outpaths[0], path.join(__dirname, '..', '..', 'out', path.basename(outpaths[1])))
 }
 
 main()
