@@ -4,9 +4,10 @@ a simple launcher for binmaster products
 
 ---
 
+### The latest pre-built binaries are available [here](https://github.com/aesthetic0001/bm-launcher/releases/latest)
+
 ### Pre-requisites
 - [Node.js](https://nodejs.org/en/) 18+
-- 
 
 ### Setting up a development environment locally
 1. Clone the repository (`git clone https://github.com/aesthetic0001/bm-launcher.git`)
