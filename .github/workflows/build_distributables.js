@@ -21,15 +21,12 @@ const options = {
     },
     win: {
         target: 'msi',
-        defaultArch: "x64",
     },
     mac: {
         target: 'dmg',
-        defaultArch: "x64",
     },
     linux: {
         target: ["AppImage", "deb"],
-        defaultArch: "x64",
     },
     dmg: {
         contents: [
@@ -55,11 +52,11 @@ const options = {
     }
 };
 
-const targets = [
-    Platform.WINDOWS.createTarget(),
-    Platform.MAC.createTarget(),
-    Platform.LINUX.createTarget()
-]
+const targets = builder.createTargets([
+        Platform.WINDOWS,
+        Platform.MAC,
+        Platform.LINUX]
+    , null, "x64")
 
 if (fs.existsSync(path.join(__dirname, '..', '..', 'out'))) {
     fs.rmSync(path.join(__dirname, '..', '..', 'out'), {recursive: true})
@@ -68,14 +65,12 @@ if (fs.existsSync(path.join(__dirname, '..', '..', 'out'))) {
 fs.mkdirSync(path.join(__dirname, '..', '..', 'out'))
 
 async function main() {
-    for (const target of targets) {
-        console.log(target)
-        const outpaths = await builder.build({
-            targets: target,
-            config: options
-        })
-        console.log(outpaths)
-        fs.renameSync(outpaths[0], path.join(__dirname, '..', '..', 'out', path.basename(outpaths[0])))
+    const outpaths = await builder.build({
+        targets: targets,
+        config: options
+    })
+    for (const outpath of outpaths) {
+        fs.renameSync(outpath, path.join(__dirname, '..', '..', 'out', path.basename(outpath)))
     }
 }
 
