@@ -2,7 +2,7 @@
   "name": "bm-launcher",
   "version": "1.0.0",
   "description": "a launcher for binmaster products",
-  "author": "aesthetic",
+  "author": "aesthetic <aesthetic0001@protonmail.com>",
   "email": "aesthetic0001@protonmail.com",
   "license": "MIT",
   "main": "main.js",
