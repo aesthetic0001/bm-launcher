@@ -65,8 +65,9 @@ async function main() {
         targets: Platform.current().createTarget(),
         config: options
     })
-    console.log(outpaths)
-    fs.renameSync(outpaths[0], path.join(__dirname, '..', '..', 'out', path.basename(outpaths[1])))
+    for (const outpath of outpaths) {
+        fs.renameSync(outpath, path.join(__dirname, '..', '..', 'out', path.basename(outpath)))
+    }
 }
 
 main()
