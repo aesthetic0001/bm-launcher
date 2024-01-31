@@ -54,12 +54,6 @@ const options = {
     }
 };
 
-const targets = {
-    win32: Platform.WINDOWS.createTarget(),
-    linux: Platform.LINUX.createTarget(),
-    darwin: Platform.MAC.createTarget()
-}
-
 if (fs.existsSync(path.join(__dirname, '..', '..', 'out'))) {
     fs.rmSync(path.join(__dirname, '..', '..', 'out'), {recursive: true})
 }
@@ -68,8 +62,8 @@ fs.mkdirSync(path.join(__dirname, '..', '..', 'out'))
 
 async function main() {
     const outpaths = await builder.build({
-        ...options,
-        targets: targets[process.platform]
+        targets: Platform.current().createTarget(),
+        config: options
     })
     console.log(outpaths)
     fs.renameSync(outpaths[0], path.join(__dirname, '..', '..', 'out', path.basename(outpaths[1])))
