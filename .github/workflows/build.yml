@@ -15,9 +15,11 @@ jobs:
         with:
           node-version: 18.x
 
-      - name: Install Wine
-        run: sudo apt update && sudo apt install wine64
+      - name: Install Brew
+        run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
+      - name: Install Wine
+        run: brew tap homebrew/cask-versions && brew install --cask --no-quarantine
 
       - name: Install node-prune
         run: curl -sf https://gobinaries.com/tj/node-prune | sh
@@ -33,5 +35,4 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            checksum.txt
             ./out/*
