@@ -20,10 +20,16 @@ const options = {
         buildResources: "installer/resources"
     },
     win: {
-        target: 'msi'
+        target: 'msi',
+        arch: ['x64']
     },
     mac: {
-        target: 'dmg'
+        target: 'dmg',
+        arch: ['x64', 'arm64']
+    },
+    linux: {
+        target: ["AppImage", "deb"],
+        arch: ['x64', 'arm64']
     },
     dmg: {
         contents: [
@@ -43,9 +49,6 @@ const options = {
             width: 500,
             height: 500
         }
-    },
-    linux: {
-        target: ["AppImage", "deb"]
     },
     deb: {
         priority: "optional",
