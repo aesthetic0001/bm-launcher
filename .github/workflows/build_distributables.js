@@ -7,7 +7,6 @@ const Platform = builder.Platform
  */
 const options = {
     extends: null,
-    appId: "com.binmaster.launcher",
     productName: "BinMaster Launcher",
     artifactName: "${productName}-${version}.${ext}",
     asar: true,
@@ -16,7 +15,7 @@ const options = {
     nodeGypRebuild: false,
     buildDependenciesFromSource: false,
     directories: {
-        output: "dist/artifacts/local",
+        output: "dist/artifacts/",
         buildResources: "installer/resources"
     },
     win: {
@@ -52,14 +51,16 @@ const options = {
     }
 };
 
-// Promise is returned
-builder.build({
-    targets: [Platform.MAC.createTarget(), Platform.WINDOWS.createTarget(), Platform.LINUX.createTarget()],
-    config: options
-})
-    .then((result) => {
-        console.log(JSON.stringify(result))
-    })
-    .catch((error) => {
-        console.error(error)
-    })
+const targets = [Platform.WINDOWS.createTarget()]
+
+async function main() {
+    for (const target of targets) {
+        const path = await builder.build({
+            targets: target,
+            config: options
+        })
+        console.log(path)
+    }
+}
+
+main()
