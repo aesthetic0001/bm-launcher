@@ -28,7 +28,7 @@ const options = {
     linux: {
         executableName: "BinMaster Launcher",
         artifactName: "binmaster-launcher-${version}-${arch}.${ext}",
-        target: ["deb"],
+        target: 'deb',
     },
     dmg: {
         contents: [
