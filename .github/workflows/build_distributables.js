@@ -49,11 +49,15 @@ const options = {
     }
 };
 
-const targets = builder.createTargets([
+const targetWin = builder.createTargets([
         Platform.WINDOWS,
-        Platform.MAC
-    ]
-    , null, "x64")
+    ], null, "x64")
+
+const targetMac = builder.createTargets([
+    Platform.MAC,
+], null, "arm64")
+
+const targets = [targetWin, targetMac]
 
 if (fs.existsSync(path.join(__dirname, '..', '..', 'out'))) {
     fs.rmSync(path.join(__dirname, '..', '..', 'out'), {recursive: true})
@@ -62,10 +66,14 @@ if (fs.existsSync(path.join(__dirname, '..', '..', 'out'))) {
 fs.mkdirSync(path.join(__dirname, '..', '..', 'out'))
 
 async function main() {
-    const outpaths = await builder.build({
-        targets: targets,
-        config: options
-    })
+    const outpaths = []
+    for (const target of targets) {
+        const result = await builder.build({
+            options,
+            targets: target
+        })
+        outpaths.push(result[0])
+    }
     for (const outpath of outpaths) {
         fs.renameSync(outpath, path.join(__dirname, '..', '..', 'out', path.basename(outpath)))
     }
