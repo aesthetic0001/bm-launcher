@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "a launcher for binmaster products",
   "author": "aesthetic",
+  "email": "aesthetic0001@protonmail.com",
   "license": "MIT",
   "main": "main.js",
   "bin": "main.js",
