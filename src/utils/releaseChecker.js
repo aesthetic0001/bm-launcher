@@ -24,7 +24,7 @@ const releaseNameMap = {
         linux: 'binmaster-auction-linux.zip',
         darwin: 'binmaster-auction-macos.zip',
     },
-    slayer: {
+    combat: {
         win32: 'binmaster-slayer-win.exe.zip',
         linux: 'binmaster-slayer-linux.zip',
         darwin: 'binmaster-slayer-macos.zip',
